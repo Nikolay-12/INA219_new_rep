@@ -2,7 +2,7 @@
 
 #include "ina219_driver.h"
 
-#define CURRENT_SENSORS_NUM 4
+#define CURRENT_SENSORS_NUM 3
 
 //A namespace in C++ is essentially a good and simple alternative to a static class. A perfect fit for singleton pattern.
 //Declarations in this header will be included in other source files and therefore will be visible outside of current_sensors.cpp.
