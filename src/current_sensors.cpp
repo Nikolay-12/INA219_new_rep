@@ -3,8 +3,10 @@
 #include "ina219_driver.h"
 #include <Wire.h>
 
-#define MY_INA219_CAL_MAGIC 33554.4 /* Divide by ohms */
-#define MY_INA219_CURRENT_LSB 1.2207E-6
+#define MY_INA219_CAL_MAGIC 4096 /*Pasha: 33554.4 Divide by ohms */
+#define MY_INA219_CURRENT_LSB 1.0E-4 // Pasha: 1.2207E-6   CALC_VALUE = trunc(0.04096/CURRENT_LSB*Rshunt)
+#define USED_CONFIGURATION     INA219_CONFIG_BVOLTAGERANGE_32V | INA219_CONFIG_GAIN_8_320MV | INA219_CONFIG_BADCRES_12BIT |
+                    INA219_CONFIG_SADCRES_12BIT_1S_532US | INA219_CONFIG_MODE_SANDBVOLT_CONTINUOUS  //32V_2A configuration -- CurrentLSB = 0.0001 -- calValue = 4096
 
 //Anything declared (but not defined!) here will not be visible in other source files. Therefore instance_t is "private".
 //Remember that the first definitions without a preceding declaration will be considered as both.
@@ -44,6 +46,21 @@ namespace current_sensors
                 ina219::setCalibration(inst.d->address, 
                     static_cast<uint16_t>(roundf(MY_INA219_CAL_MAGIC / inst.d->shunt_resistance_ohms)), 
                     MY_INA219_CURRENT_LSB);
+                uint16_t config = INA219_CONFIG_BVOLTAGERANGE_32V |
+                    INA219_CONFIG_GAIN_8_320MV | INA219_CONFIG_BADCRES_12BIT |
+                    INA219_CONFIG_SADCRES_12BIT_1S_532US |
+                    INA219_CONFIG_MODE_SANDBVOLT_CONTINUOUS; //32V_2A configuration -- CurrentLSB = 0.0001 -- calValue = 4096
+                /*
+                uint16_t config = INA219_CONFIG_BVOLTAGERANGE_32V |
+                    INA219_CONFIG_GAIN_8_320MV | INA219_CONFIG_BADCRES_12BIT |
+                    INA219_CONFIG_SADCRES_12BIT_1S_532US |
+                    INA219_CONFIG_MODE_SANDBVOLT_CONTINUOUS; //32V_1A configuration -- CurrentLSB = 0.00004 -- calValue = 10240
+                uint16_t config = INA219_CONFIG_BVOLTAGERANGE_16V |
+                    INA219_CONFIG_GAIN_1_40MV | INA219_CONFIG_BADCRES_12BIT |
+                    INA219_CONFIG_SADCRES_12BIT_1S_532US |
+                    INA219_CONFIG_MODE_SANDBVOLT_CONTINUOUS; //16V_0.4A configuration  -- CurrentLSB = 0.00005 -- calValue = 8192
+                */
+                ina219::setConfig(inst.d->address, USED_CONFIGURATION) // set configuration
                 inst.initialization_ok = true;
             }
         }
@@ -56,6 +73,9 @@ namespace current_sensors
         for (auto &&inst : instances)
         {
             if (!inst.initialization_ok) continue; //Skip devices that failed to answer during initialization. This is just an example, you might want to do something with them further.
+            ina219::setCalibration(inst.d->address, 
+                    static_cast<uint16_t>(roundf(MY_INA219_CAL_MAGIC / inst.d->shunt_resistance_ohms)), 
+                    MY_INA219_CURRENT_LSB);
             inst.current_amps = ina219::readCurrent(inst.d->address);
         }
     }
