@@ -92,7 +92,7 @@ namespace ina219
 
     void setCalibration(uint8_t addr, uint16_t CalibrationData, float current_lsb)
     {
-        ina219_current_lsb = 0;
+        ina219_current_lsb = current_lsb;
         Write16(addr, INA219_REG_CALIBRATION, CalibrationData);
     }
 
