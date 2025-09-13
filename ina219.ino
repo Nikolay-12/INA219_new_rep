@@ -6,8 +6,7 @@
 current_sensors::descriptor_t current_sensor_descriptors[CURRENT_SENSORS_NUM] = {
     { 0x40, 1 /*just an example, I don't remember actual resistances*/ },
     { 0x41, 1 },
-    { 0x44, 1 },
-    { 0x45, 1 }
+    { 0x44, 1 }
 };
 
 void setup(void)
