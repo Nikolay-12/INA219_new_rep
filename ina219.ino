@@ -5,6 +5,7 @@ current_sensors::descriptor_t current_sensor_descriptors[CURRENT_SENSORS_NUM] = 
     { 0x40, 0.1 },
     { 0x41, 0.1 },
     { 0x44, 0.1 }
+    //{0x45, 0.6, 20}
 };
 
 void setup(void)
